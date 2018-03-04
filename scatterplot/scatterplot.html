@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<title>Graphic Circle</title>
+	<link rel="stylesheet" href="../assets/css/material-pe.min.css">
+	<link rel="stylesheet" href="scatterplot.css">
+</head>
+<body>
+<br>
+
+<!--		The Scatterplot-->
+	<div class="scatterplot"></div>
+
+	<script src="https://d3js.org/d3.v4.min.js"></script>
+	<script>
+		
+		var dataset = [
+						[ 5, 20 ],
+						[ 480, 90 ],
+						[ 250, 50 ],
+						[ 100, 33 ],
+						[ 330, 95 ],
+						[ 410, 12 ],
+						[ 475, 44 ],
+						[ 25, 67 ],
+						[ 85, 21 ],
+						[ 220, 88 ]
+					];
+		
+		
+		var w = 450;
+		var h = 150;
+		var aPadding = 20;
+		
+		/*Creating a svg*/
+		var SVG = d3.select("div.scatterplot").append("svg")
+					.attr("width", w)
+					.attr("height", h);
+		
+		/* Creating a Dynamic Scale */
+		var xSCALE = d3.scaleLinear()
+						.domain([0, d3.max(dataset, function(d){ return d[0]; } )])
+						.range([0, w])
+						.range([aPadding, w - aPadding*2]);
+					
+		var ySCALE = d3.scaleLinear()
+						.domain([0, d3.max(dataset, function(d){ return d[1] })])
+						.range([h, 10]); /* .range([h, 0]); */
+//						.range(h - aPadding, aPadding );
+		
+		var rSCALE = d3.scaleLinear()
+						.domain([0, d3.max(dataset, function(d){ return d[1]; })])
+						.range([2, 5]);
+		
+		var aSCALE = d3.scaleSqrt()
+						.domain([0, d3.max(dataset, function(d){ return d[1]; })])
+						.range([0, 10]);
+		
+		/*Converting string to Date */
+		var aTime = d3.timeParse("%d/%m/%y");
+		
+		var rowConverter = function(d) {
+				return {
+					Date: parseTime(d.Fecha),
+					Amount: parseInt(d.Cantidad)
+					};
+				}
+
+		
+		/* ---------------------------------------------------------------------------- */
+		
+		/*Circles*/
+			SVG.selectAll("circle")
+				.data(dataset)
+				.enter()
+				.append("circle")
+				.attr("cx", function(d){
+//					return d[0];
+					return xSCALE(d[0]);
+				   })
+				.attr("cy", function(d){
+//					return d[1];
+					return ySCALE(d[1]);
+				   })
+//				.attr("r", 5);
+				.attr("r", function(d){
+					  return rSCALE(d[1]);
+					  });
+			
+		/*Text: info*/
+			SVG.selectAll("text")
+				.data(dataset)
+				.enter()
+				.append("text")
+				.text( function(d){
+					return d[0] + "," + d[1];
+					} )
+				.attr("x", function(d){
+//					return d[0];
+					 return xSCALE(d[0]);
+					} )
+				.attr("y", function(d){
+//					return d[1];
+					 return ySCALE(d[1]);
+					} )
+				.attr("font-family", "Roboto Black")
+				.attr("font-size", "12px")
+				.attr("fill", "#BDBDBD");
+				
+		
+		
+	</script>
+
+</body>
+</html>
