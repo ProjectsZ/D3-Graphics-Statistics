@@ -10,7 +10,8 @@
 <br>
 
 <!--		The Scatterplot-->
-	<div class="scatterplot"></div>
+	<div class="scatterplot">
+	</div>
 
 	<script src="https://d3js.org/d3.v4.min.js"></script>
 	<script>
@@ -28,10 +29,31 @@
 						[ 220, 88 ]
 					];
 		
+		//random dataset
+//		var dataset = []
+//		var numDataPoints = 50;
+//		var xRange = Math.random() * 1000;
+//		var yRange = Math.random() * 1000;
+//		for( var i =0; i<numDataPoints; i++ ){
+//			var newNumb1 = Math.floor( Math.random() * xRange );
+//			var newNumb2 = Math.floor( Math.random() * yRange );
+//			
+//			dataset.push([newNumb1, newNumb2]);
+//		}
+
 		
-		var w = 450;
-		var h = 150;
-		var aPadding = 20;
+	
+		var w = 500;
+		var h = 350;
+		var aPadding = 30;
+				
+		var rowConverter = function(d) {
+			/* Function for converting CSV values from strings to Dates and numbers*/
+				return {
+					Date: aTime(d.Fecha),
+					Amount: parseInt(d.Cantidad)
+					};
+				}
 		
 		/*Creating a svg*/
 		var SVG = d3.select("div.scatterplot").append("svg")
@@ -41,32 +63,34 @@
 		/* Creating a Dynamic Scale */
 		var xSCALE = d3.scaleLinear()
 						.domain([0, d3.max(dataset, function(d){ return d[0]; } )])
-						.range([0, w])
 						.range([aPadding, w - aPadding*2]);
 					
 		var ySCALE = d3.scaleLinear()
 						.domain([0, d3.max(dataset, function(d){ return d[1] })])
-						.range([h, 10]); /* .range([h, 0]); */
-//						.range(h - aPadding, aPadding );
+						.range([h-aPadding, aPadding]); /* .range([h, 0]); */
 		
 		var rSCALE = d3.scaleLinear()
 						.domain([0, d3.max(dataset, function(d){ return d[1]; })])
-						.range([2, 5]);
+//						.range([2, 5]);
+						.range([20/5, 50/5]);
+//		var rSCALE = d3.scaleSqrt()
+//						.domain([0, d3.max(dataset, function(d){ return d[1]; })])
+//						.range([0, 10]);
 		
-		var aSCALE = d3.scaleSqrt()
-						.domain([0, d3.max(dataset, function(d){ return d[1]; })])
-						.range([0, 10]);
+//		var formatAsPercentage = d3.format(.365);
 		
-		/*Converting string to Date */
-		var aTime = d3.timeParse("%d/%m/%y");
+		var xAxis = d3.axisBottom()
+					  .scale(xSCALE)
+//					  .tickFormat(formatAsPercentage); /*Timer*/
+					  .ticks(5)/*ajustando el axis x dataset*/;
+//					  .tickValues([0,100,250,480]);
+//		var xAxis = d3.axisBottom(xSCALE);
 		
-		var rowConverter = function(d) {
-				return {
-					Date: parseTime(d.Fecha),
-					Amount: parseInt(d.Cantidad)
-					};
-				}
-
+		var yAxis = d3.axisLeft()
+					  .scale(ySCALE)
+					  .ticks(5);
+		
+		
 		
 		/* ---------------------------------------------------------------------------- */
 		
@@ -104,11 +128,21 @@
 //					return d[1];
 					 return ySCALE(d[1]);
 					} )
-				.attr("font-family", "Roboto Black")
+				.attr("font-family", "Roboto Bold")
 				.attr("font-size", "12px")
 				.attr("fill", "#BDBDBD");
 				
+		/*Axis in eje X*/
+		SVG.append("g")
+			  .attr("class", "axis")
+			  .attr("transform", "translate(0, "+( h - aPadding )+" )")
+			  .call(xAxis);
 		
+		/*Axis in eje Y*/
+		SVG.append("g")
+			  .attr("class", "axis")
+			  .attr("transform", "translate("+aPadding+" ,0)")
+			  .call(yAxis);
 		
 	</script>
 
