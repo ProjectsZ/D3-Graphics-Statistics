@@ -1,0 +1,26 @@
+{
+  "name": "d3-graphics",
+  "version": "0.0.1",
+  "description": "\"Ready to go D3 data visualization project\"",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ProjectsZ/D3-Graphics-Statistics.git"
+  },
+  "keywords": [
+    "data",
+    "d3"
+  ],
+  "author": "Fred Pizarro",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ProjectsZ/D3-Graphics-Statistics/issues"
+  },
+  "homepage": "https://github.com/ProjectsZ/D3-Graphics-Statistics#readme",
+  "dependencies": {
+    "d3": "4.x"
+  }
+}

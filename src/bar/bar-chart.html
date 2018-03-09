@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<title>Graphic Bar Chart</title>
+	<link rel="stylesheet" href="../assets/css/material-pe.min.css">
+	<link rel="stylesheet" href="bar-chart.css">
+</head>
+<body>
+<br>
+
+<!--		The Scatterplot-->
+	<div class="bar-chart">
+		<p>Click on this text</p>
+	</div>
+
+	<script src="https://d3js.org/d3.v4.min.js"></script>
+	<script>
+		
+		var dataset = [ 5, 10, 13, 19, 21, 25, 22, 18, 15, 13, 11, 12, 15, 20, 18, 17 ];
+
+		var w = 600;
+		var h = 250;
+		var barPadding = 30;
+		
+		var xSCALE = d3.scaleBand()
+						.domain(d3.range(dataset.length))
+//						.range([0,w])
+//						.round(true) /* Enable rounding */
+						.rangeRound([0, w])
+						.paddingInner(0.05);
+		
+		var ySCALE = d3.scaleLinear()
+						.domain([0, d3.max(dataset)])
+						.range([0, h]);
+
+		
+		/*Creating a svg*/
+		var SVG = d3.select("div.bar-chart").append("svg")
+					.attr("width", w)
+					.attr("height", h);
+		
+		SVG.selectAll("rect")
+			.data(dataset)
+			.enter()
+			.append("rect")
+			.attr("x", function(d, i){ return xSCALE(i); })
+			.attr("width", xSCALE.bandwidth());
+//			.attr("width", w/dataset.length - barPadding)
+		
+		SVG.selectAll("text")
+			.data(dataset)
+			.text( function(d){ return d; } )
+			.attr("x", function(d,i){ return xSCALE(i) + xSCALE.bandwidth()/2; })
+			.attr("y", function(d){ return h - ySCALE(d)+14; })
+		
+		
+		d3.select("p")
+			.on("click", function(){
+				console.log("clickeado");
+				dataset = [ 11, 12, 15, 20, 18, 17, 16, 18, 23, 25, 5, 10, 13, 19, 21, 25, 22, 18, 15, 13 ];
+				
+				/*UPDATE: rect*/
+				SVG.select("rect")
+					.data(dataset)
+					.attr("y", function(d){ return h-ySCALE(d); })
+					.attr("height", function(d){ return ySCALE(d); })
+					.attr("fill", function(d){
+							return "rgb(0, 0, "+Math.round(d*10)+")";
+						});
+			});
+		
+		
+	</script>
+</body>
+</html>	

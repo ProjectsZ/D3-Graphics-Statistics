@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<title>Drawing Grid Lines</title>
+	<link rel="stylesheet" href="../../assets/css/material-pe.min.css">
+	<link rel="stylesheet" href="drawing-grid-line.css">
+</head>
+<body>
+<br>
+	<div class="drawing">
+	</div>
+
+	<script src="https://d3js.org/d3.v4.min.js"></script>
+	<script type="text/javascript">
+		var w= 500;
+		var h =500;
+		var aMargin = 25;
+		
+		/*Creating a svg*/
+		var SVG = d3.select("div.drawing").append("svg")
+					.attr("class", "axis")
+					.attr("width", w)
+					.attr("height", h);
+		
+		function renderXAxis(){
+			var axisLength = w - 2 * aMargin;
+			
+			/* Creating a Dynamic Scale */
+			var XScale = d3.scaleLinear()
+						  .domain([0, 100])
+						  .range([0, axisLength]);
+			
+			var XAxis = d3.axisBottom()
+						  .scale(XScale);
+			
+			/*Axis in eje X*/
+			SVG.append("g")
+				.attr("class", "x-axis")
+				.attr("transform", function(){ return "translate("+
+					aMargin + "," + (h - aMargin) +")" })
+				.call(XAxis);
+			
+			d3.selectAll("g.x-axis g.tick")
+				.append("line")
+				.classed("grid-line", true)
+				.attr("x1", 0).attr("y1", 0)
+			 	.attr("x2", 0).attr("y2", -(h - 2 * aMargin));
+		}
+		
+		function renderYAxis(){
+			var axisLong = h - 2 * aMargin;
+			
+			/* Creating a Dynamic Scale */
+			var YScale = d3.scaleLinear()
+						  .domain([100, 0])
+						  .range([0, axisLong]);
+			
+			var YAxis = d3.axisLeft()
+						  .scale(YScale);
+			
+			/*Axis in eje Y*/
+			SVG.append("g")
+				.attr("class", "y-axis")
+				.attr("transform", function(){ return "translate("+
+					aMargin+","+aMargin+")" })
+				.call(YAxis);
+			
+			d3.selectAll("g.y-axis g.tick")
+			  .append("line")
+			  .classed("grid-line", true)
+			  .attr("x1", 0).attr("y1", 0)
+			  .attr("x2", axisLong).attr("y2", 0);
+		}
+			
+		renderYAxis();
+		renderXAxis();	
+		
+	</script>
+</body>
+</html>
