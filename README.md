@@ -6,6 +6,8 @@ Data-Driven Documents Gráficos estadisticos interactivos.
 
 #### Scatterplot
 ![Scatterplot](assets/imgs/scatterplot.png)
+
+#### Scatterplot
 ![GridLines](assets/imgs/grid-line.png)
 
 

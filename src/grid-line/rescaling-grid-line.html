@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<title>Dynamic Rescaling of Axes</title>
+	<link rel="stylesheet" href="../../assets/css/material-pe.min.css">
+	<link rel="stylesheet" href="drawing-grid-line.css">
+</head>
+<body>
+
+	<div class="rescaling">
+	</div>
+
+	<script src="https://d3js.org/d3.v4.min.js"></script>
+	<script type="text/javascript">
+		
+		var h = 500,
+			w = 500,
+			aMargin = 25;
+		var xAxis, yAxis;
+		var xAxisLength, yAxisLength;
+		
+		var SVG = d3.select("div.rescaling").append("svg")
+					.attr("class", "axis")
+					.attr("width", w)
+					.attr("height", h);
+		
+		function renderXAxis(){
+			xAxisLength = w - 2 * aMargin;
+			
+			var Scale = d3.scaleLinear()
+						  .domain([0,100])
+						  .range([0, xAxisLength]);
+			
+			xAxis = d3.axisBottom()
+					  .scale(Scale);
+			
+			SVG.append("g")
+				.attr("class", "x-axis")
+				.attr("transform", function(){ return "translate ("+
+								aMargin + "," + (h - aMargin) +")"; })
+				.call(xAxis);
+		}
+		
+		function renderYAxis(){
+			yAxisLength = h - 2 * aMargin;
+			
+			var Scale = d3.scaleLinear()
+						  .domain([100, 0])
+						  .range(([0, yAxisLength]));
+			
+			yAxis = d3.axisLeft()
+					  .scale(Scale);
+			
+			SVG.append("g")
+				.attr("class", "y-axis")
+				.attr("transform", function(){ return "translate ("+
+								aMargin + ","+aMargin+")"; })
+				.call(yAxis);
+		}
+		
+		
+		/*********************************************************************************/
+		function rescale(){
+			var max = Math.round( Math.random() * 100 ); /* Mode random */
+			
+			 xAxis.scale().domain([0, max]);
+			 yAxis.scale().domain([max, 0]);
+			
+			SVG.select("g.x-axis")
+				.transition()
+				.call(xAxis);
+			
+			SVG.select("g.y-axis")
+				.transition()
+				.call(yAxis);
+			
+			renderXGridLines(); renderYGridLines();			
+		}
+		/*********************************************************************************/
+
+		
+		function renderXGridLines(){
+			
+			d3.selectAll("g.x-axis g.tick")
+				.select("line.grid-line")
+				.remove();
+			
+			d3.selectAll("g.x-axis g.tick").append("line")
+				.classed("grid-line", true)
+				.attr("x1", 0).attr("y1", 0)
+				.attr("x2", 0).attr("y2", -yAxisLength);				
+		}
+		
+		function renderYGridLines(){
+			
+			d3.selectAll("g.y-axis g.tick")
+				.select("line.grid-line")
+				.remove();
+			
+			d3.selectAll("g.y-axis g.tick").append("line")
+				.classed("grid-line", true)
+				.attr("x1", 0).attr("y1", 0)
+				.attr("x2", xAxisLength).attr("y2", 0);
+		}
+		
+		renderYAxis(); renderXAxis();
+		renderXGridLines(); renderYGridLines();
+	</script>
+	
+	<button onclick="rescale()">Reescalar</button>
+</body>
+</html>
