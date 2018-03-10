@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<title>Multi Element Transition</title>
+	<link rel="stylesheet" href="../../assets/css/material-pe.min.css">
+	<link rel="stylesheet" href="bar-chart-transition.css">
+</head>	
+<body>
+	<div class="bar-chart-transition">
+	</div>
+
+	<script src="https://d3js.org/d3.v4.min.js"></script>
+	<script type="text/javascript">
+		
+		var dataset =[];
+		
+		var id=0,
+			chartW=680,
+			chartH=100;
+		var duration = 500;
+		
+		for(var i=0; i<20; i++) addPush(dataset);
+		
+		function render(dataset){
+			var seleccionando = d3.select("div.bar-chart-transition")
+							.selectAll("div.bar-chart")
+							.data(dataset, function(d){
+								  	return d.id;
+								  });
+			
+			/* Enter */
+			seleccionando.enter().append("div")
+					.attr("class", "bar-chart")
+					.style("z-index", "0")
+					.style("position", "fixed")
+					.style("top", chartH + "px")
+					.style("left", function(d, i){
+							return bar_Left(i +1) + "px";
+						})
+					.style("height", "0px")
+					.append("span");
+			
+			/* Update */
+			seleccionando.transition().duration(duration)
+					.style("top", function(d){
+							return chartH - bar_Height(d) + "px";
+						})
+					.style("left", function(d, i){
+							return bar_Left(i) + "px";
+						})
+					.style("height", function(d){
+							return bar_Height(d) + "px";
+						})
+					.select("span").text(function(d){ return d.value; })
+			
+			/* Exit */
+			seleccionando.exit().transition().duration(duration)
+						.style("left",function(d){ return bar_Left(-1)+"px"; })
+						.remove();
+			
+		}
+		
+		function addPush(dataset){
+			dataset.push({
+				id: ++id,
+				value: Math.round(Math.random() * chartH)
+			});
+		}
+		
+		function bar_Left(i){ return i * (30+2); }
+		function bar_Height(d){ return d.value; }
+		
+		setInterval( function(){ dataset.shift(); addPush(dataset);
+							   render(dataset); }, 2000 );
+		render(dataset);
+		
+		d3.select("bar-chart-transition").append("div")
+			.attr("class", "baseline")
+			.style("position", "fixed")
+			.style("z-index", "1")
+			.style("top", chartH + "px")
+			.style("left", "0px")
+			.style("width", chartW + "px");
+		
+	</script>	
+</body>
+</html>
