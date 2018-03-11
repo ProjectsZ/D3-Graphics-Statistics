@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<title>Category population</title>
+	<link rel="stylesheet" href="../../assets/css/material-pe.min.css">
+	<style>
+		div.tooltip{
+			position: absolute;
+			text-align:center;
+			padding: 5px;
+			border-radius: 5px;
+			font-size: 1em; font-family: "Roboto Regular";
+			background: #40C4FF;
+			box-shadow:0 2px 2px 0 rgba(0,0,0,0.14),0 1px 5px 0 rgba(0,0,0,0.12),0 3px 1px -2px rgba(0,0,0,0.2);
+		}
+	</style>	
+</head>	
+<body>
+	
+	<div class="bc-category_population">
+		
+	</div>
+	<script src="https://d3js.org/d3.v4.min.js"></script>
+
+	<script type="text/javascript">
+	
+var dataset = [{
+  name: "Computer",
+  quantity: 1,
+  shoppingAll: 9,
+  population: 1415,
+  discountsCountAll: 6
+}, {
+  name: "Tablet",
+  quantity: 3,
+  shoppingAll: 10,
+  population: 395,
+  discountsCountAll: 5
+}, {
+  name: "Mobil",
+  quantity: 5,
+  shoppingAll: 3,
+  population: 4322,
+  discountsCountAll: 1
+}];
+//		
+//document.addEventListener("DOMContentLoaded", function(){
+//	/*  */
+
+		
+		function statisticsProduct(d){
+			return d.discountsCountAll/ (d.quantity + d.discountsCountAll);
+		}
+		
+		
+		dataset.sort(function(a, b){
+			return statisticsProduct(a) - statisticsProduct(b);
+		})
+		
+		var w = 500;
+		var h = 350;
+		
+//		var transicion = d3.transition().duration(800);
+		
+		var SVG = d3.select("div.bc-category_population").append("svg")
+					.attr("width", w)
+					.attr("height", h);
+		
+		var aPadding = { aLeft:40, aTop:10, aRight: 0, aBottom: 100 };
+		
+	 	var yMinimo = d3.min(dataset, function(d){ return d.population; });
+		var yMaximo = d3.max(dataset, function(d){ return d.population; });
+				
+		var tooltipDiv = d3.select("div.bc-category_population").append("div")
+						.attr("class", "tooltip")
+						.style("opacity", 0);
+		
+		var ySCALE = d3.scaleLinear()
+						.domain([yMinimo, yMaximo])
+						.range([h - aPadding.aTop, aPadding.aBottom]);
+		
+		var xSCALE = d3.scaleBand()
+						.domain(dataset.map( function(d){ return d.name; } ))
+						.range([aPadding.aLeft, w - aPadding.aRight])
+						.padding(0.1);
+		
+		var colorSCALE = d3.scaleLinear()
+						  .domain([0, 1])
+						  .range(["#03A9F4", "#009688"]);
+		
+		var rectas = SVG.selectAll("rect")
+					.data(dataset)
+					.enter().append("rect")
+						.attr("x", function(d){ return xSCALE(d.name); })
+						.attr("width", xSCALE.bandwidth())
+						.attr("y", h - aPadding.aBottom)
+						.attr("height", 0)
+						.attr("fill", function(d){
+								return colorSCALE(statisticsProduct(d));
+							});
+		 
+		var transicion = d3.transition().duration(12000);
+		
+/* ************************************************************************************************* */
+		
+		rectas.transition(transicion).ease(d3.easeExpOut)
+			.attr("y", d=> ySCALE(d.population) - aPadding.aBottom + aPadding.aTop)
+			.attr("height", (d)=>{ return h - ySCALE(d.population); });
+		
+		/* Tooltip */
+		rectas.on("mouseover", function(d){
+					tooltipDiv.html("<p>"+ d.name +": "+d.population+ "</p>");
+					tooltipDiv.style("opacity", 1);
+			
+					var width = parseInt(tooltipDiv.style("width"));
+					var height = parseInt(tooltipDiv.style("height").slice(0, -2));
+					
+					tooltipDiv.style("left", `${ d3.event.pageX - (width/2)}px`);
+					tooltipDiv.style("top", `${ d3.event.pageY - height - 20}px`);
+					tooltipDiv.style("opacity", 1);
+			
+					console.log(d);
+				})
+			.on("mouseout", function(){
+					tooltipDiv.style("opacity", 0);
+				})
+		
+		/* axis - number: population*/
+		SVG.append("g")
+			.attr("transform", "translate("+aPadding.aLeft+","+
+				  				(-aPadding.aBottom+10+aPadding.aTop)+")")
+//			.attr("transform", "translate("+aPadding.aLeft+","+
+//				  				(-aPadding.aBottom+aPadding.aTop)+")")
+			.call(d3.axisLeft(ySCALE));
+		
+		/*axis - text: name */
+		SVG.append("g")
+			.attr("transform", "translate(0"+","+
+				  				(h - aPadding.aBottom + aPadding.aTop)+")")
+			.call(d3.axisBottom(xSCALE))
+		   .selectAll("text")
+//			.attr("transform", "rotate(90) translate("+aPadding.aTop+","+ (-12)+ ")")
+			.attr("transform", "rotate(90) translate("+aPadding.aTop+","+
+				  (20-xSCALE.bandwidth()/4)+ ")")
+//			.attr("transform", "rotate(90) translate("+aPadding.aTop+","+
+//				  				(-3-xSCALE.bandwidth()/2) + ")")
+//			.attr("transform", "rotate(90) translate("+aPadding.aTop+","+
+//				  				(-3-xSCALE.bandwidth()/2) + ")")
+			.style("text-anchor", "start");
+/**/
+//})	
+		
+	</script>
+	
+</body>
+</html>
