@@ -10,6 +10,9 @@ Data-Driven Documents Gráficos estadisticos interactivos.
 #### Grid Line
 ![GridLines](assets/imgs/grid-line.png)
 
+#### Bar Chart (Category population)
+![BarChartCP](assets/imgs/bar-chart-category-population.png)
+
 
 # Contact
 More contributions and suggestions in the theme to:
